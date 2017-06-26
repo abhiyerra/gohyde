@@ -3,11 +3,34 @@ package main
 import (
 	"encoding/base64"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"strings"
+
+	"log"
+
+	"os"
+
+	"github.com/dghubble/go-twitter/twitter"
+	"github.com/dghubble/oauth1"
 )
 
+var (
+	consumerKey    string
+	consumerSecret string
+	accessToken    string
+	accessSecret   string
+)
+
+func init() {
+	consumerKey = os.Getenv("consumerKey")
+	consumerSecret = os.Getenv("consumerSecret")
+	accessToken = os.Getenv("accessToken")
+	accessSecret = os.Getenv("accessSecret")
+
+	if consumerKey == "" || consumerSecret == "" || accessToken == "" || accessSecret == "" {
+		log.Fatal("Environment variables not set!")
+	}
+}
 func removeCharacters(input string, characters string) string {
 	filter := func(r rune) rune {
 		if strings.IndexRune(characters, r) < 0 {
@@ -44,12 +67,27 @@ func encode(path *string) (content []string, err error) {
 func decode(url *string) {
 }
 
+func uploadFile(file string) (err error) {
+	config := oauth1.NewConfig("consumerKey", "consumerSecret")
+	token := oauth1.NewToken("accessToken", "accessSecret")
+	httpClient := config.Client(oauth1.NoContext, token)
+	client := twitter.NewClient(httpClient)
+	_, _, err = client.Statuses.Update(file, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	var filename = flag.String("f", "", "filename of the guy")
 	flag.Parse()
 
 	file, _ := encode(filename)
 	for _, k := range file {
-		fmt.Print(k)
+		if err := uploadFile(k); err != nil {
+			log.Printf("Failed to upload file: %s", err)
+			break
+		}
 	}
 }
