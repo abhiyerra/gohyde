@@ -3,16 +3,16 @@
 
 * Encode
 
-  - [ ] Open a file and read the file as binary
-    - [ ] Base64 encode the content of the file
+  - [*] Open a file and read the file as binary
+    - [*] Base64 encode the content of the file
 
-  - [ ] Break a file into chunks of 140 characters
+  - [*] Break a file into chunks of 140 characters
 #+BEGIN_SRC ruby
 def chunk(string, size)
   (0..(string.length-1)/size).map{|i|string[i*size,size]}
 end
 #+END_SRC
-  - [ ] upload the chunks to Twitter
+  - [*] upload the chunks to Twitter
     - [ ] Create a file with ordering with chunk_id - tweet_id
 
 #+BEGIN_SRC go
