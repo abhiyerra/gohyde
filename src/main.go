@@ -1,32 +1,30 @@
 package main
 
 import (
+	"encoding/base64"
+	"flag"
 	"fmt"
 	"io/ioutil"
-	"flag"
 )
 
-func Encode(path *string) string {
-	var file []byte
-	var err error
-
-	if file, err = ioutil.ReadFile(path) {
-		return len(file)
+func encode(path *string) (content string, err error) {
+	filepath := *path
+	file, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		return "", err
 	}
 
-	return string(file)
+	base64File := base64.StdEncoding.EncodeToString(file)
+	return base64File, nil
 }
 
-func Decode(url *string) void {
-	
+func decode(url *string) {
 }
 
 func main() {
 	var filename = flag.String("f", "", "filename of the guy")
 	flag.Parse()
-	
-	Encode(filename)
 
-        fmt.Println("Hello, world.  Sqrt(2) = ", *filename)
-	
+	file, _ := encode(filename)
+	fmt.Print(file)
 }
